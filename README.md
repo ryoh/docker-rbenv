@@ -4,7 +4,7 @@ Prepare image which is installed muliple versions of ruby and bundler for each v
 
 ## Usage
 
-You can use this image for your project soon. It's uploaded docker.io, [tcnksm/rbenv](https://index.docker.io/u/tcnksm/rbenv/).
+You can use this image for your project soon. It's uploaded docker.io, ryoh/rbenv
 
 ```
 docker pull tcnksm/rbenv
@@ -13,7 +13,7 @@ docker pull tcnksm/rbenv
 or in Dockerfile
 
 ```
-FROM tcnksm/rbenv
+FROM ryoh/docker-rbenv
 ```
 
 Run it !
