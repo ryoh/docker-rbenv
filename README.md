@@ -4,22 +4,22 @@ Prepare image which is installed muliple versions of ruby and bundler for each v
 
 ## Usage
 
-You can use this image for your project soon. It's uploaded docker.io, ryoh/rbenv
+You can use this image for your project soon. It's uploaded docker.io, [ryoh/rbenv](https://index.docker.io/u/ryoh/rbenv/)
 
 ```
-docker pull tcnksm/rbenv
+docker pull ryoh/rbenv
 ```
 
 or in Dockerfile
 
 ```
-FROM ryoh/docker-rbenv
+FROM ryoh/rbenv
 ```
 
 Run it !
 
 ```
-docker run -i -t tcnksm/rbenv bash -l -c 'rbenv global 2.0.0-p353; bundle ...'
+docker run -i -t tcnksm/rbenv bash -l -c 'rbenv global 2.1.0; bundle ...'
 ```
 
 
@@ -65,6 +65,7 @@ Dockerfile execute belows;
 
 - [docker-plenv-vanilla](https://github.com/miyagawa/docker-plenv-vanilla)
 - [Using Docker and Vagrant on Mac OS X with a Ruby on Rails application](http://blog.powpark.com/2013/11/11/using-docker-and-vagrant-on-mac-osx-for-a-ruby-on-rails-app/)
+- [tcnksm/dockerfile-rbenv](https://github.com/tcnksm/dockerfile-rbenv)
 
 ## Author
 
