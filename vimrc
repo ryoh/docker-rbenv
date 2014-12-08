@@ -8,10 +8,17 @@ if has('vim_starting')
   set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
 
-call neobundle#rc(expand('~/.vim/bundle/'))
+call neobundle#begin(expand('~/.vim/bundle/'))
 
 "---- plugins start ---------------------------
+NeoBundle 'Align'
 NeoBundle 'Shougo/neobundle.vim'
+NeoBundle 'Shougo/vimshell'
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/unite-outline'
+NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/neosnippet'
+NeoBundle 'Shougo/vimfiler'
 NeoBundle 'Shougo/vimproc.vim', {
   \ 'build' : {
     \ 'windows' : 'make -f make_mingw32.mak',
@@ -20,19 +27,47 @@ NeoBundle 'Shougo/vimproc.vim', {
     \ 'unix'    : 'make -f make_unix.mak',
   \ },
 \ }
-NeoBundle 'VimClojure'
-NeoBundle 'Shougo/vimshell'
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/neocomplcache'
-NeoBundle 'Shougo/neosnippet'
-NeoBundle 'jpalardy/vim-slime'
-NeoBundle 'scrooloose/syntastic'
-
-NeoBundle 'alpaca-tc/alpaca_tags'
+NeoBundle 'nathanaelkane/vim-indent-guides'
+NeoBundle 'bronson/vim-trailing-whitespace'
+NeoBundle 'altercation/vim-colors-solarized'
+NeoBundle 'itchyny/lightline.vim'
+NeoBundle 'vim-scripts/AnsiEsc.vim'
+NeoBundle 'vim-scripts/md5.vim'
 NeoBundle 'AndrewRadev/switch.vim'
-NeoBundle 'bbatsov/rubocop'
+NeoBundle 'thinca/vim-quickrun'
+NeoBundle 'tomtom/tcomment_vim'
+NeoBundle 'ervandew/supertab'
+NeoBundle 'scrooloose/nerdtree'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 'tpope/vim-fugitive'
 NeoBundle 'tpope/vim-endwise'
+NeoBundle 'tpope/vim-surround'
+NeoBundle 'tpope/vim-rails'
+NeoBundle 'tpope/vim-bundler'
+NeoBundle 'tpope/vim-cucumber'
+NeoBundle 'vim-ruby/vim-ruby'
+NeoBundle 'slim-template/vim-slim'
+NeoBundle 'skalnik/vim-vroom'
+NeoBundle 'bbatsov/rubocop'
+NeoBundleLazy 'alpaca-tc/alpaca_tags', {
+      \ 'depends': ['Shougo/vimproc'],
+      \ 'autoload': {
+      \   'commands': [
+      \     {'name': 'AlpacaTagsBundle', 'complete': 'customlist,alpaca_tags#complete_source' },
+      \     {'name': 'AlpacaTagsUpdate', 'complete': 'customlist,alpaca_tags#complete_source' },
+      \     'AlpacaTagsSet', 'AlpacaTagsCleanCache', 'AlpacaTagsEnable', 'AlpacaTagsDisable', 'AlpacaTagsKillProcess', 'AlpacaTagsProcessStatus',
+      \   ],
+      \ }}
+NeoBundleLazy 'marcus/rsense', {
+      \ 'autoload': {
+      \   'filetypes': 'ruby',
+      \ },
+      \ }
+NeoBundle 'Shougo/neocomplcache-rsense.vim', {
+      \ 'depends': ['Shougo/neocomplcache.vim', 'marcus/rsense'],
+      \ }
 "---- plugins end ----------------------
+call neobundle#end()
 
 filetype plugin indent on     " Required!
 
@@ -44,6 +79,87 @@ if neobundle#exists_not_installed_bundles()
   "finish
 endif
 
+let g:neocomplcache_force_overwrite_completefunc=1
+"--------------------------------------
+" Base setting
+"--------------------------------------
+syntax on
+
+" colorscheme
+set background=dark
+colorscheme solarized
+let g:solarized_termcolors=256
+
+" system
+set nobackup
+set noswapfile
+set nowritebackup
+set wrap
+set shiftround
+set hidden
+set history=10000
+set mouse=a
+set ttymouse=xterm2
+set showcmd
+set textwidth=0
+set cursorline
+set clipboard=unnamed,autoselect
+set nrformats=
+
+" editor visual
+set number
+
+" tabs and indent
+set expandtab
+set smartindent
+set shiftwidth=4
+set tabstop=4
+set autoindent
+set cindent
+set smartindent
+
+" fileencoding
+set fenc=utf8
+set fencs=utf8,sjis,euc-jp,iso-2022-jp,cp932
+
+" brace match
+set matchpairs& matchpairs+=<:>
+set showmatch
+set matchtime=3
+
+" search
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+
+" Can undo when stop vim
+if has('persistent_undo')
+  set undofile
+  set undodir=./.vimundo,~/.vim/undo
+endif
+
+inoremap jj <Esc>
+nmap <silent> <Esc><Esc> :nohlsearch<CR>
+
+" change target window
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" change window size
+nnoremap <S-Left> <C-w><<CR>
+nnoremap <S-Right> <C-w>><CR>
+nnoremap <S-Up> <C-w>-<CR>
+nnoremap <S-Up> <C-w>+<CR>
+
+" imap
+imap { {}<Left>
+imap [ []<Left>
+imap ( ()<Left>
+
+
 "----------------------------------------
 " AlpacaTags
 "----------------------------------------
@@ -54,6 +170,7 @@ augroup AlpacaTags
     autocmd BufEnter * TagsSet
   endif
 augroup END
+
 
 "----------------------------------------
 " neosnippet
@@ -90,6 +207,7 @@ function! s:separate_defenition_to_each_filetypes(ft_dictionary) "{{{
   return result
 endfunction"}}}
 
+" switch defined {{
 nnoremap ! :Switch<CR>
 let s:switch_definition = {
       \ '*': [
@@ -188,6 +306,7 @@ let s:switch_definition = {
       \   ['[ ]', '[x]']
       \ ]
       \ }
+"}}
  
 let s:switch_definition = s:separate_defenition_to_each_filetypes(s:switch_definition)
 function! s:define_switch_mappings() "{{{
@@ -208,10 +327,6 @@ function! s:define_switch_mappings() "{{{
 
   if has_key(s:switch_definition, '*')
     let dictionary = extend(dictionary, s:switch_definition['*'])
-  endif
-
-  if !empty('dictionary')
-    call alpaca#let_b:('switch_custom_definitions', dictionary)
   endif
 endfunction"}}}
 
@@ -239,16 +354,82 @@ let g:syntastic_mode_map = {"mode": "passive",
 "----------------------------------------
 " endwise.vim
 "----------------------------------------
-let g:endwise_no_mappings = 1
+"let g:endwise_no_mappings = 1
 
 
 "----------------------------------------
-" settings
+" fugitive
 "----------------------------------------
-syntax  on
-set     ai ci si
-set     sw=2 ts=2
-set     expandtab
-set     nobackup
-set     noswapfile
-set     nohlsearch
+autocmd QuickFixCmdPost *grep* cwindow
+set statusline+=%{fugitive#statusline()}
+
+
+"----------------------------------------
+" vim-indent-guides
+"----------------------------------------
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,ColorScheme * :hi IndentGuidesOdd  guibg=#262626 ctermbg=gray
+autocmd VimEnter,ColorScheme * :hi IndentGuidesEven guibg=#3c3c3c ctermbg=darkgray
+let g:indent_guides_color_change_percent = 30
+let g:indent_guides_guide_size = 1
+
+
+"----------------------------------------
+" Visible Zenkaku Space
+"----------------------------------------
+function! ZenkakuSpace()
+  highlight ZenkakuSpace cterm=underline ctermbg=lightblue guibg=darkgray
+endfunction
+
+if has('syntax')
+  augroup ZenkakuSpace
+    autocmd!
+    autocmd ColorScheme * call ZenkakuSpace()
+    autocmd VimEnter,WinEnter,BufRead * let w:m1=matchadd('ZenkakuSpace', '　')
+  augroup END
+  call ZenkakuSpace()
+endif
+
+
+"-----------------
+" NERDTree
+"-----------------
+map <C-e> :NERDTreeToggle<CR>
+let g:NERDTreeDirArrows = 0
+let g:NERDTreeMouseMode = 0
+autocmd VimEnter * if !argc() | NERDTree ./ | endif
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+
+"-----------------
+" quickrun
+"-----------------
+let g:quickrun_config={'*': {'split': ''}}
+let g:quickrun_config._={ 'runner': 'vimproc',
+      \ 'runner/vimproc/updatetime': 10,
+      \ 'outputter/buffer/close_on_empty': 1,
+      \ }
+
+
+"-----------------
+" lightline
+"-----------------
+set laststatus=2
+set t_Co=256
+let g:lightline = {
+      \ 'colorscheme': 'solarized'
+      \ }
+
+
+"-----------------
+" rsense
+"-----------------
+let g:neocomplcache#sources#rsense#home_directory = '~/.rsense'
+
+
+NeoBundleCheck
+"=======================================
+" vim:ft=vim:fenc=utf-8:ff=unix:fdm=marker:ts=2:sw=2:tw=80:et:
+"=======================================

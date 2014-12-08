@@ -50,7 +50,7 @@ RUN dpkg -i /tmp/deb/vim-tiny_7.4.052-1ubuntu4_amd64.deb \
 #------------------------------------------------
 # Install Dev tools
 #------------------------------------------------
-RUN apt-get install -y git-core make bison gcc cpp g++ autoconf build-essential
+RUN apt-get install -y git-core make bison gcc cpp g++ autoconf build-essential exuberant-ctags
 
 #------------------------------------------------
 # Install rubyenv libraries
@@ -66,10 +66,9 @@ RUN sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 #------------------------------------------------
 # Add ruby user
 #------------------------------------------------
-ADD ./vimrc /etc/skel/.vimrc
+RUN locale-gen ja_JP.UTF-8 && dpkg-reconfigure locales
 RUN adduser --disabled-password --gecos "" ruby && \
     echo "ruby ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ruby && \
-    locale-gen ja_JP ja_JP.UTF-8 && dpkg-reconfigure locales && \
     echo "ruby:ruby" | chpasswd
 USER ruby
 WORKDIR /home/ruby
@@ -103,12 +102,14 @@ RUN echo 'export LANG=ja_JP.UTF-8' >> ${HOME}/.bashrc && \
 #------------------------------------------------
 # vimrc
 #------------------------------------------------
+ADD ./vimrc ${HOME}/.vimrc
 RUN mkdir -p .vim/bundle
 RUN git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
 RUN git clone https://github.com/Shougo/vimproc.vim   ~/.vim/bundle/vimproc.vim && \
     cd ~/.vim/bundle/vimproc.vim && \
     make
 RUN cd ~/.vim/bundle/neobundle.vim/bin && ./neoinstall
+RUN ruby ${HOME}/.vim/bundle/rsense/etc/config.rb > ~/.rsense
 
 #------------------------------------------------
 # git
@@ -116,4 +117,5 @@ RUN cd ~/.vim/bundle/neobundle.vim/bin && ./neoinstall
 ADD ./.gitignore_global /home/ruby/.gitignore_global
 ADD ./.gitconfig        /home/ruby/.gitconfig
 
+EXPOSE 3000
 ENV DEBIAN_FRONTED dialog
